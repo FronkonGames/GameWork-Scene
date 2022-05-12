@@ -1,0 +1,16 @@
+﻿{
+  "name": "com.fronkongames.gamework.modules.scenemodule",
+  "references":
+  [
+    "com.fronkongames.gamework.core",
+    "com.fronkongames.gamework.foundation"
+  ],
+  "optionalUnityReferences": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}
