@@ -29,8 +29,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
   /// .
   /// </summary>
   public sealed class SceneModule : MonoBehaviourModule,
-                                    IInitializable,
-                                    IBeforeSceneLoad
+                                    IInitializable
   {
     /// <summary>
     /// Is it initialized?
@@ -91,8 +90,8 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     [SerializeField, Tooltip("Progress text.")]
     private Text progressText = null;
 
-    [SerializeField, Tooltip("Resources paths.")]
-    private List<string> backgroundImagePaths = new List<string>();
+    [SerializeField, Tooltip("Resources path.")]
+    private string backgroundImagePath;
 
     [SerializeField, Tooltip("Wait extra time after the scene load.")]
     private float waitExtraTime = 0.0f;
@@ -154,13 +153,6 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     }
 
     /// <summary>
-    /// Before scene is loaded.
-    /// </summary>
-    public void OnBeforeSceneLoad()
-    {
-    }
-
-    /// <summary>
     /// 
     /// </summary>
     /// <param name="sceneName"></param>
@@ -214,7 +206,9 @@ namespace FronkonGames.GameWork.Modules.SceneModule
 
           Application.backgroundLoadingPriority = backgroundLoadingPriority;
 
-          // @TODO: Fade in.
+          await LoadUI();
+
+          await Fade(0.0f, 1.0f);
 
           if (this.sceneBuildIndex != -1)
           {
@@ -247,13 +241,17 @@ namespace FronkonGames.GameWork.Modules.SceneModule
           asyncOp.allowSceneActivation = true;
 
           await Awaiters.NextUpdate();
-          
+
           SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(sceneBuildIndex));
 
           this.sceneBuildIndex = sceneBuildIndex;
 
           if (waitExtraTime > 0.0f)
             await Awaiters.Seconds(waitExtraTime);
+
+          await Fade(1.0f, 0.0f);
+
+          UnloadUI();
 
           Application.backgroundLoadingPriority = defaultThreadPriority;
 
@@ -289,6 +287,82 @@ namespace FronkonGames.GameWork.Modules.SceneModule
       }
       else
         Log.Warning("No scene loaded");
+    }
+
+    private async Task LoadUI()
+    {
+      if (canvasGroup != null)
+      {
+        if (string.IsNullOrEmpty(backgroundImagePath) == false)
+        {
+          ResourceRequest request = Resources.LoadAsync<Sprite>(backgroundImagePath);
+          while (request.isDone == false)
+            await Task.Delay(10);
+
+          if (request.asset != null)
+            backgroundImage.sprite = request.asset as Sprite;
+          else
+            Log.Error($"Texture '{backgroundImagePath}' not found");
+        }
+
+        canvasGroup.gameObject.SetActive(true);
+        canvasGroup.alpha = 0.0f;
+
+        Canvas canvas = canvasGroup.gameObject.GetComponent<Canvas>();
+        if (canvas != null)
+          canvas.sortingOrder = 100;
+
+        if (progressBackgroundImage != null)
+          progressBackgroundImage.enabled = false;
+
+        if (progressForegroundImage != null)
+        {
+          progressForegroundImage.enabled = false;
+          progressForegroundImage.fillAmount = 0.0f;
+        }
+      }
+    }
+
+    private async Task Fade(float start, float end)
+    {
+      if (canvasGroup != null)
+      {
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.alpha = start;
+      }
+
+      if (canvasGroup != null && fadeTime > 0.0f)
+      {
+        float time = 0.0f;
+        while (time < fadeTime)
+        {
+          time += Time.unscaledDeltaTime;
+          canvasGroup.alpha = Mathf.Lerp(start, end, time / fadeTime);
+
+          await Awaiters.NextUpdate();
+        }
+      }
+
+      if (canvasGroup != null)
+      {
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.alpha = end;
+      }
+    }
+
+    private void UnloadUI()
+    {
+      if (canvasGroup != null)
+      {
+        if (canvasGroup != null)
+          canvasGroup.gameObject.SetActive(false);
+
+        if (backgroundImage != null)
+        {
+          Resources.UnloadAsset(backgroundImage.sprite);
+          backgroundImage.sprite = null;
+        }
+      }
     }
   }
 }
