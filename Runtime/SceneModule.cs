@@ -246,11 +246,14 @@ namespace FronkonGames.GameWork.Modules.SceneModule
 
           asyncOp.allowSceneActivation = true;
 
-          // @HACK: The activation of the scene takes a frame.
-          //yield return waitForFixedUpdate;
-          //SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(sceneBuildIndex));
+          await Awaiters.NextUpdate();
+          
+          SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(sceneBuildIndex));
 
           this.sceneBuildIndex = sceneBuildIndex;
+
+          if (waitExtraTime > 0.0f)
+            await Awaiters.Seconds(waitExtraTime);
 
           Application.backgroundLoadingPriority = defaultThreadPriority;
 

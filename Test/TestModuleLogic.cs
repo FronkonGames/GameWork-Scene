@@ -16,57 +16,74 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using UnityEngine;
 using FronkonGames.GameWork.Core;
-using FronkonGames.GameWork.Modules.SceneModule;
 
-/// <summary>
-/// .
-/// </summary>
-public sealed class TestModuleLogic : IUpdatable
+namespace FronkonGames.GameWork.Modules.SceneModule
 {
-  private SceneModule SceneModule
+  /// <summary>
+  /// .
+  /// </summary>
+  public sealed class TestModuleLogic : IInitializable,
+                                        IUpdatable
   {
-    get
+    private SceneModule sceneModule;
+
+    /// <summary>
+    /// Should be updated?
+    /// </summary>
+    /// <value>True/false.</value>
+    public bool ShouldUpdate { get; set; } = true;
+
+    /// <summary>
+    /// Is it initialized?
+    /// </summary>
+    /// <value>Value</value>
+    public bool Initialized { get; set; }
+
+    /// <summary>
+    /// When initialize.
+    /// </summary>
+    public void OnInitialize()
     {
-      if (sceneModule == null)
-        sceneModule = SceneModuleTest.Instance.GetModule<SceneModule>();
-
-      return sceneModule;
+      sceneModule = GameTest.Instance.GetModule<SceneModule>();
     }
-  }
 
-  private SceneModule sceneModule;
+    /// <summary>
+    /// At the end of initialization.
+    /// Called in the first Update frame.
+    /// </summary>
+    public void OnInitialized() { }
 
-  /// <summary>
-  /// Should be updated?
-  /// </summary>
-  /// <value>True/false.</value>
-  public bool ShouldUpdate { get; set; } = true;
+    /// <summary>
+    /// When deinitialize.
+    /// </summary>
+    public void OnDeinitialize() { }
 
-  /// <summary>
-  /// Update event.
-  /// </summary>
-  public void OnUpdate()
-  {
-    if (SceneModule != null)
+    /// <summary>
+    /// Update event.
+    /// </summary>
+    public void OnUpdate()
     {
-      int currentSceneBUildIndex = SceneModule.CurrentSceneBuildIndex;
+      if (sceneModule != null && sceneModule.IsLoading == false)
+      {
+        int currentSceneBUildIndex = sceneModule.CurrentSceneBuildIndex;
 
-      if (currentSceneBUildIndex != 1 && Input.GetKeyUp(KeyCode.Alpha1) == true)
-        SceneModule.Load("Menu");
-      else if (currentSceneBUildIndex != 2 && Input.GetKeyUp(KeyCode.Alpha2) == true)
-        SceneModule.Load("Level1");
-      else if (currentSceneBUildIndex != 3 && Input.GetKeyUp(KeyCode.Alpha3) == true)
-        SceneModule.Load("Level2");
+        if (currentSceneBUildIndex != 1 && Input.GetKeyUp(KeyCode.Alpha1) == true)
+          sceneModule.Load("Menu");
+        else if (currentSceneBUildIndex != 2 && Input.GetKeyUp(KeyCode.Alpha2) == true)
+          sceneModule.Load("Level1");
+        else if (currentSceneBUildIndex != 3 && Input.GetKeyUp(KeyCode.Alpha3) == true)
+          sceneModule.Load("Level2");
+      }
     }
+
+    /// <summary>
+    /// FixedUpdate event.
+    /// </summary>
+    public void OnFixedUpdate() { }
+
+    /// <summary>
+    /// LateUpdate event.
+    /// </summary>
+    public void OnLateUpdate() { }
   }
-
-  /// <summary>
-  /// FixedUpdate event.
-  /// </summary>
-  public void OnFixedUpdate() { }
-
-  /// <summary>
-  /// LateUpdate event.
-  /// </summary>
-  public void OnLateUpdate() { }
 }
