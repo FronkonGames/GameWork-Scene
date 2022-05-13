@@ -15,8 +15,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using FronkonGames.GameWork.Core;
 using FronkonGames.GameWork.Foundation;
@@ -26,8 +28,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
   /// <summary>
   /// .
   /// </summary>
-  [CreateAssetMenu(fileName = "SceneModule", menuName = "Game:Work/Modules/Scene Module", order = 0)]
-  public sealed class SceneModule : ScriptableModule,
+  public sealed class SceneModule : MonoBehaviourModule,
                                     IInitializable,
                                     IBeforeSceneLoad
   {
@@ -43,10 +44,10 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     public bool IsLoading { get { return isLoading; } }
 
     /// <summary>
-    /// 
+    /// Current scene build index.
     /// </summary>
     /// <value></value>
-    public int CurrentSceneBuildIndex { get { return currentSceneBuildIndex; } }
+    public int CurrentSceneBuildIndex { get { return sceneBuildIndex; } }
 
     [SerializeField, Tooltip("Scene to start (>0).")]
     private int startSceneIndex = 1;
@@ -59,6 +60,42 @@ namespace FronkonGames.GameWork.Modules.SceneModule
 
     [SerializeField, Tooltip("Unload unsued assets?")]
     private bool unloadUnusedAssets = true;
+
+    [SerializeField, Tooltip("Fade in/out time.")]
+    private float fadeTime = 1.0f;
+
+    [SerializeField, Tooltip("Loading canvas.")]
+    private CanvasGroup canvasGroup = null;
+
+    [SerializeField, Tooltip("Background color.")]
+    private Color backgroundColor = Color.black;
+
+    [SerializeField, Tooltip("Background image.")]
+    private Image backgroundUIColor = null;
+
+    [SerializeField, Tooltip("Loading image.")]
+    private Image backgroundImage = null;
+
+    [SerializeField, Tooltip("Titulo.")]
+    private Text tittleText = null;
+
+    [SerializeField, Tooltip("Tooltip text.")]
+    private Text tooltipText = null;
+
+    [SerializeField, Tooltip("Progress background image.")]
+    private Image progressBackgroundImage = null;
+
+    [SerializeField, Tooltip("Progress image.")]
+    private Image progressForegroundImage = null;
+
+    [SerializeField, Tooltip("Progress text.")]
+    private Text progressText = null;
+
+    [SerializeField, Tooltip("Resources paths.")]
+    private List<string> backgroundImagePaths = new List<string>();
+
+    [SerializeField, Tooltip("Wait extra time after the scene load.")]
+    private float waitExtraTime = 0.0f;
 
     /// <summary>
     /// Before the additive load.
@@ -75,22 +112,18 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     /// </summary>
     public static Action OnAfterLoad;
 
-    [NonSerialized]
     private bool isLoading;
 
-    [NonSerialized]
-    private int currentSceneBuildIndex = -1;
+    private int sceneBuildIndex = -1;
 
-    [NonSerialized]
     private ThreadPriority defaultThreadPriority;
 
-    [NonSerialized]
     private Camera cameraMain;
 
     /// <summary>
     /// When initialize.
     /// </summary>
-    public async void OnInitialize()
+    public void OnInitialize()
     {
       defaultThreadPriority = Application.backgroundLoadingPriority;
       cameraMain = GameObject.FindObjectOfType<Camera>();
@@ -98,7 +131,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
       if (SceneManager.GetActiveScene().buildIndex == 0)
       {
         if (startSceneIndex > 0)
-          await Load(startSceneIndex);
+          Load(startSceneIndex);
       }
       else
         Log.Error("This module must exist only on scene 0.");
@@ -110,7 +143,6 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     /// </summary>
     public void OnInitialized()
     {
-      Log.Info($"Scene module initialized: {SceneManager.sceneCountInBuildSettings} scenes found");
     }
 
     /// <summary>
@@ -133,7 +165,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     /// </summary>
     /// <param name="sceneName"></param>
     /// <returns></returns>
-    public async void Load(string sceneName)
+    public void Load(string sceneName)
     {
       int sceneBuildIndex = -1;
       for (int i = 0; i < SceneManager.sceneCountInBuildSettings; ++i)
@@ -153,7 +185,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
       }
 
       if (sceneBuildIndex > 0)
-        await Load(sceneBuildIndex);
+        Load(sceneBuildIndex);
       else
         Log.Error($"Scene '{sceneName}' not found");
     }
@@ -163,11 +195,18 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     /// </summary>
     /// <param name="sceneBuildIndex"></param>
     /// <returns></returns>
-    public async Task Load(int sceneBuildIndex)
+    public async void Load(int sceneBuildIndex) => await LoadAsync(sceneBuildIndex);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sceneBuildIndex"></param>
+    /// <returns></returns>
+    private async Task LoadAsync(int sceneBuildIndex)
     {
       if (IsLoading == false)
       {
-        if (sceneBuildIndex != currentSceneBuildIndex && sceneBuildIndex < SceneManager.sceneCountInBuildSettings)
+        if (sceneBuildIndex != this.sceneBuildIndex && sceneBuildIndex < SceneManager.sceneCountInBuildSettings)
         {
           isLoading = true;
 
@@ -177,7 +216,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
 
           // @TODO: Fade in.
 
-          if (currentSceneBuildIndex != -1)
+          if (this.sceneBuildIndex != -1)
           {
             if (cameraMain != null)
               cameraMain.gameObject.SetActive(true);
@@ -185,7 +224,33 @@ namespace FronkonGames.GameWork.Modules.SceneModule
             await UnloadAsync();
           }
 
-          await LoadAsync(sceneBuildIndex);
+          AsyncOperation asyncOp = SceneManager.LoadSceneAsync(sceneBuildIndex, LoadSceneMode.Additive);
+          asyncOp.allowSceneActivation = false;
+          asyncOp.priority = asyncOpPriority;
+
+          // @HACK: The final 10% is to wakeup the main thread.
+          while (asyncOp.progress < 0.9f)
+          {
+            // [0, 0.9] > [0, 1].
+            float progress = Mathf.Clamp01(asyncOp.progress / 0.9f);
+
+            // @TODO: Progressbar.
+
+            OnProgress?.Invoke(progress);
+
+            await Task.Delay(10);
+          }
+
+          if (cameraMain != null)
+            cameraMain.gameObject.SetActive(false);
+
+          asyncOp.allowSceneActivation = true;
+
+          // @HACK: The activation of the scene takes a frame.
+          //yield return waitForFixedUpdate;
+          //SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(sceneBuildIndex));
+
+          this.sceneBuildIndex = sceneBuildIndex;
 
           Application.backgroundLoadingPriority = defaultThreadPriority;
 
@@ -200,42 +265,11 @@ namespace FronkonGames.GameWork.Modules.SceneModule
         Log.Error("Scene loading in progress");
     }
 
-    private async Task LoadAsync(int sceneBuildIndex)
-    {
-      AsyncOperation asyncOp = SceneManager.LoadSceneAsync(sceneBuildIndex, LoadSceneMode.Additive);
-      asyncOp.allowSceneActivation = false;
-      asyncOp.priority = asyncOpPriority;
-
-      // @HACK: The final 10% is to wakeup the main thread.
-      while (asyncOp.progress < 0.9f)
-      {
-        // [0, 0.9] > [0, 1].
-        float progress = Mathf.Clamp01(asyncOp.progress / 0.9f);
-
-        // @TODO: Progressbar.
-
-        OnProgress?.Invoke(progress);
-        
-        await Task.Delay(10);
-      }
-
-      asyncOp.allowSceneActivation = true;
-
-      if (cameraMain != null)
-        cameraMain.gameObject.SetActive(false);
-
-      // @HACK: The activation of the scene takes a frame.
-      //yield return waitForFixedUpdate;
-      //SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(sceneBuildIndex));
-
-      currentSceneBuildIndex = sceneBuildIndex;
-    }
-
     private async Task UnloadAsync()
     {
-      if (currentSceneBuildIndex != -1)
+      if (sceneBuildIndex != -1)
       {
-        AsyncOperation asyncOp = SceneManager.UnloadSceneAsync(currentSceneBuildIndex);
+        AsyncOperation asyncOp = SceneManager.UnloadSceneAsync(sceneBuildIndex);
         asyncOp.allowSceneActivation = false;
         asyncOp.priority = asyncOpPriority;
 
@@ -248,7 +282,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
         if (unloadUnusedAssets == true)
           Resources.UnloadUnusedAssets();
 
-        currentSceneBuildIndex = -1;
+        sceneBuildIndex = -1;
       }
       else
         Log.Warning("No scene loaded");

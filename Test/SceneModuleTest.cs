@@ -14,18 +14,24 @@
 // COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+using UnityEngine;
 using FronkonGames.GameWork.Core;
+using FronkonGames.GameWork.Modules.SceneModule;
 
 /// <summary>
 /// .
 /// </summary>
 public sealed class SceneModuleTest : Game
 {
+  [SerializeField]
+  private SceneModule sceneModule;
+
   /// <summary>
   /// On initialize.
   /// </summary>
   public override void OnInitialize()
   {
+    RegisterModule(sceneModule);
     RegisterModule(typeof(TestModuleLogic));
   }
 }
