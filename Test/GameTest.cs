@@ -33,7 +33,6 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     public override void OnInitialize()
     {
       RegisterModule(sceneModule);
-      RegisterModule(typeof(TestModuleLogic));
     }
   }
 }

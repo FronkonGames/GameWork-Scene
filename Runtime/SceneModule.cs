@@ -240,11 +240,10 @@ namespace FronkonGames.GameWork.Modules.SceneModule
 
           asyncOp.allowSceneActivation = true;
 
-          await Awaiters.NextUpdate();
-
-          SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(sceneBuildIndex));
+          await Awaiters.NextFixedUpdate();
 
           this.sceneBuildIndex = sceneBuildIndex;
+          SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(sceneBuildIndex));
 
           if (waitExtraTime > 0.0f)
             await Awaiters.Seconds(waitExtraTime);
