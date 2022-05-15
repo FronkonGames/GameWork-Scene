@@ -1,9 +1,9 @@
 ﻿{
-  "name": "com.fronkongames.gamework.modules.scenemodule",
+  "name": "FronkonGames.GameWork.Modules.SceneModule",
   "references":
   [
-    "com.fronkongames.gamework.core",
-    "com.fronkongames.gamework.foundation"
+    "FronkonGames.GameWork.Core",
+    "FronkonGames.GameWork.Foundation"
   ],
   "optionalUnityReferences": [],
   "includePlatforms": [],

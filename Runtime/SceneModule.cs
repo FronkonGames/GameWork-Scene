@@ -15,7 +15,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -48,7 +47,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     /// <value></value>
     public int CurrentSceneBuildIndex { get { return sceneBuildIndex; } }
 
-    [SerializeField, Tooltip("Scene to start (>0).")]
+    [SerializeField, SceneBuildIndex(1, "Scene to start (>0).")]
     private int startSceneIndex = 1;
 
     [SerializeField, Tooltip("Background load priority.")]

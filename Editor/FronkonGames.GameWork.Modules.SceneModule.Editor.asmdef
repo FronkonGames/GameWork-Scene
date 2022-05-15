@@ -1,0 +1,16 @@
+﻿{
+  "name": "FronkonGames.GameWork.Modules.SceneModule.Editor",
+  "references":
+  [
+    "FronkonGames.GameWork.Foundation.Editor",
+    "FronkonGames.GameWork.Modules.SceneModule"
+  ],
+  "optionalUnityReferences": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}
