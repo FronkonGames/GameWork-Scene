@@ -33,8 +33,9 @@
   ...
   "dependencies":
   {
-    "com.fronkongames.gamework.foundation": "git+https://github.com/FronkonGames/GameWork-Scene-Module.git"
     "com.fronkongames.gamework.core": "git+https://github.com/FronkonGames/GameWork-Scene-Module.git"
+    "com.fronkongames.gamework.core": "git+https://github.com/FronkonGames/GameWork-Core.git"
+    "com.fronkongames.gamework.foundation": "git+https://github.com/FronkonGames/GameWork-Foundation.git"
   }
   ...
 }
