@@ -14,7 +14,6 @@
 // COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-using UnityEngine;
 using UnityEditor;
 using FronkonGames.GameWork.Foundation;
 
@@ -31,7 +30,30 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     /// </summary>
     protected override void InspectorGUI()
     {
-      SceneField("startSceneIndex", "Start scene");
+      int scene = SceneField("startSceneIndex", "Start Scene");
+      if (scene == 0)
+        EditorGUILayout.HelpBox("The starting scene cannot be the first.", MessageType.Error);
+
+      Header("Settings");
+
+      EnumField("backgroundLoadingPriority", "Loading Priority");
+      SliderField("asyncOpPriority", "Async Priority");
+      BoolField("unloadUnusedAssets");
+
+      Header("UI");
+
+      SliderField("fadeTime");
+      CanvasGroupField("canvasGroup");
+      ColorField("backgroundColor");
+      ImageField("backgroundUIColor");
+      ImageField("backgroundImage");
+      TextField("tittleText");
+      TextField("tooltipText");
+      ImageField("progressBackgroundImage");
+      ImageField("progressForegroundImage");
+      TextField("progressText");
+      StringField("backgroundImagePath");
+      FloatField("waitExtraTime");
     }
   }
 }

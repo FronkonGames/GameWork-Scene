@@ -406,7 +406,7 @@ GameObject:
   - component: {fileID: 1289674912}
   - component: {fileID: 1289674911}
   m_Layer: 0
-  m_Name: ScreenController
+  m_Name: SceneModuleController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

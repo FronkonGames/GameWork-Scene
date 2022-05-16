@@ -22,15 +22,26 @@ namespace FronkonGames.GameWork.Modules.SceneModule
   /// <summary>
   /// .
   /// </summary>
-  public sealed class ScreenController : MonoBehaviour
+  public sealed class SceneModuleController : MonoBehaviour
   {
+    private SceneModule sceneModule;
+
+    private void Awake()
+    {
+      sceneModule = Game.Instance.GetModule<SceneModule>();
+    }
+
+    private void OnEnable()
+    {
+      this.enabled = sceneModule != null;
+    }
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="sceneBuildIndex"></param>
     public void LoadScene(int sceneBuildIndex)
     {
-      SceneModule sceneModule = Game.Instance.GetModule<SceneModule>();
       if (sceneModule != null && sceneModule.IsLoading == false)
         sceneModule.Load(sceneBuildIndex);
     }
