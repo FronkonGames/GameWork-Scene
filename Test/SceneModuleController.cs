@@ -15,6 +15,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using UnityEngine;
+using FronkonGames.GameWork.Foundation;
 using FronkonGames.GameWork.Core;
 
 namespace FronkonGames.GameWork.Modules.SceneModule
@@ -26,14 +27,21 @@ namespace FronkonGames.GameWork.Modules.SceneModule
   {
     private SceneModule sceneModule;
 
-    private void Awake()
+    private string[] tooltips =
     {
-      sceneModule = Game.Instance.GetModule<SceneModule>();
-    }
+      "This is the tooltip #1",
+      "This is the tooltip #2",
+      "This is the tooltip #3",
+      "This is the tooltip #4",
+    };
 
     private void OnEnable()
     {
-      this.enabled = sceneModule != null;
+      sceneModule = Game.Instance.GetModule<SceneModule>();
+      if (sceneModule != null)
+      {
+        sceneModule.Title = sceneModule.GetLoadingTranslated().ToLower();
+      }
     }
 
     /// <summary>
@@ -43,7 +51,10 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     public void LoadScene(int sceneBuildIndex)
     {
       if (sceneModule != null && sceneModule.IsLoading == false)
+      {
+        sceneModule.Tooltip = tooltips.Random();
         sceneModule.Load(sceneBuildIndex);
+      }
     }
   }
 }

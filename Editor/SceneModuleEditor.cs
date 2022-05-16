@@ -25,6 +25,8 @@ namespace FronkonGames.GameWork.Modules.SceneModule
   [CustomEditor(typeof(SceneModule))]
   public sealed class SceneModuleEditor : Inspector
   {
+    private bool foldoutDebug;
+
     /// <summary>
     /// 
     /// </summary>
@@ -44,16 +46,21 @@ namespace FronkonGames.GameWork.Modules.SceneModule
 
       SliderField("fadeTime");
       CanvasGroupField("canvasGroup");
+      IntField("canvasSortOrder");
       ColorField("backgroundColor");
-      ImageField("backgroundUIColor");
       ImageField("backgroundImage");
+      StringField("backgroundImagePath");
       TextField("tittleText");
       TextField("tooltipText");
       ImageField("progressBackgroundImage");
       ImageField("progressForegroundImage");
       TextField("progressText");
-      StringField("backgroundImagePath");
-      FloatField("waitExtraTime");
+
+      foldoutDebug = HeaderFoldout("Debug", foldoutDebug);
+      if (foldoutDebug == true)
+      {
+        FloatField("waitExtraTime");
+      }
     }
   }
 }

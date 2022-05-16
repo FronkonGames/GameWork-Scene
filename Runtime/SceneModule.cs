@@ -42,6 +42,34 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     public bool IsLoading { get { return isLoading; } }
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    public string Title
+    {
+      get { return tittleText != null ? tittleText?.text : string.Empty; }
+      set
+      {
+        if (tittleText != null)
+          tittleText.text = value;
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    public string Tooltip
+    {
+      get { return tooltipText != null ? tooltipText?.text : string.Empty; }
+      set
+      {
+        if (tooltipText != null)
+          tooltipText.text = value;
+      }
+    }
+
+    /// <summary>
     /// Current scene build index.
     /// </summary>
     /// <value></value>
@@ -65,16 +93,16 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     [SerializeField, CanvasGroup("Loading canvas.")]
     private CanvasGroup canvasGroup = null;
 
+    [SerializeField, Int(100, "Canvas sort order.")]
+    private int canvasSortOrder = 100;
+
     [SerializeField, Color(0.0f, 0.0f, 0.0f, 1.0f, "Background color.")]
     private Color backgroundColor = Color.black;
-
-    [SerializeField, Image("Background image.")]
-    private Image backgroundUIColor = null;
 
     [SerializeField, Image("Loading image.")]
     private Image backgroundImage = null;
 
-    [SerializeField, Text("Titulo.")]
+    [SerializeField, Text("Title.")]
     private Text tittleText = null;
 
     [SerializeField, Text("Tooltip text.")]
@@ -119,12 +147,67 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     private Camera cameraMain;
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public string GetLoadingTranslated()
+    {
+      string loading = "Loading";
+      switch (Application.systemLanguage)
+      {
+        case SystemLanguage.Afrikaans:      loading = "Laai"; break;
+        case SystemLanguage.Arabic:         loading = "جار التحميل"; break;
+        case SystemLanguage.Basque:         loading = "Lanean"; break;
+        case SystemLanguage.Belarusian:     loading = "Загрузка"; break;
+        case SystemLanguage.Bulgarian:      loading = "Зареждане"; break;
+        case SystemLanguage.Catalan:        loading = "Carregant"; break;
+        case SystemLanguage.Chinese:        loading = "装载"; break;
+        case SystemLanguage.Czech:          loading = "Načítání"; break;
+        case SystemLanguage.Danish:         loading = "Indlæser"; break;
+        case SystemLanguage.Dutch:          loading = "Het laden"; break;
+        case SystemLanguage.English:        loading = "Loading"; break;
+        case SystemLanguage.Estonian:       loading = "Laadimine"; break;
+        // case SystemLanguage.Faroese: lo  adingString = ""; break;  ????
+        case SystemLanguage.Finnish:        loading = "Ladataan"; break;
+        case SystemLanguage.French:         loading = "Chargement"; break;
+        case SystemLanguage.German:         loading = "Wird geladen"; break;
+        case SystemLanguage.Greek:          loading = "Φόρτωση"; break;
+        case SystemLanguage.Hebrew:         loading = "טעינה"; break;
+        case SystemLanguage.Hungarian:      loading = "Betöltés"; break;
+        case SystemLanguage.Icelandic:      loading = "Hleðsla"; break;
+        case SystemLanguage.Indonesian:     loading = "Pemuatan"; break;
+        case SystemLanguage.Italian:        loading = "Caricamento in corso"; break;
+        case SystemLanguage.Japanese:       loading = "ロード中"; break;
+        case SystemLanguage.Korean:         loading = "로드 중"; break;
+        case SystemLanguage.Latvian:        loading = "Notiek ielāde"; break;
+        case SystemLanguage.Lithuanian:     loading = "Įkeliama"; break;
+        case SystemLanguage.Norwegian:      loading = "Lasting"; break;
+        case SystemLanguage.Polish:         loading = "Ładuję"; break;
+        case SystemLanguage.Portuguese:     loading = "Carregando"; break;
+        case SystemLanguage.Romanian:       loading = "Se incarca"; break;
+        case SystemLanguage.Russian:        loading = "Загрузка"; break;
+        case SystemLanguage.SerboCroatian:  loading = "Лоадинг"; break;
+        case SystemLanguage.Slovak:         loading = "Načítava"; break;
+        case SystemLanguage.Slovenian:      loading = "Nalaganje"; break;
+        case SystemLanguage.Spanish:        loading = "Cargando"; break;
+        case SystemLanguage.Swedish:        loading = "Läser in"; break;
+        case SystemLanguage.Thai:           loading = "กำลังโหลด"; break;
+        case SystemLanguage.Turkish:        loading = "Yükleniyor"; break;
+        case SystemLanguage.Ukrainian:      loading = "Завантаження"; break;
+        case SystemLanguage.Vietnamese:     loading = "Tải"; break;
+      }
+
+      return loading;
+    }
+
+    /// <summary>
     /// When initialize.
     /// </summary>
     public void OnInitialize()
     {
       defaultThreadPriority = Application.backgroundLoadingPriority;
       cameraMain = GameObject.FindObjectOfType<Camera>();
+      cameraMain.backgroundColor = backgroundColor;
 
       if (SceneManager.GetActiveScene().buildIndex == 0)
       {
@@ -308,7 +391,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
 
         Canvas canvas = canvasGroup.gameObject.GetComponent<Canvas>();
         if (canvas != null)
-          canvas.sortingOrder = 100;
+          canvas.sortingOrder = canvasSortOrder;
 
         if (progressBackgroundImage != null)
           progressBackgroundImage.enabled = false;
