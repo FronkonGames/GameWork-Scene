@@ -38,10 +38,6 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     private void OnEnable()
     {
       sceneModule = Game.Instance.GetModule<SceneModule>();
-      if (sceneModule != null)
-      {
-        sceneModule.Title = sceneModule.GetLoadingTranslated().ToLower();
-      }
     }
 
     /// <summary>
@@ -52,6 +48,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
     {
       if (sceneModule != null && sceneModule.IsLoading == false)
       {
+        sceneModule.Title = sceneModule.GetLoadingTranslated().ToLower();
         sceneModule.Tooltip = tooltips.Random();
         sceneModule.Load(sceneBuildIndex);
       }

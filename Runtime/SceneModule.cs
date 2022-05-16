@@ -290,35 +290,65 @@ namespace FronkonGames.GameWork.Modules.SceneModule
 
           await LoadUI();
 
-          await Fade(0.0f, 1.0f);
+          await Fade(0.0f, 1.0f, fadeTime, (fade) => canvasGroup.alpha = fade);
+
+          if (tittleText != null)
+            await Fade(0.0f, 1.0f, fadeTime * 0.5f, (fade) => tittleText.color = tittleText.color.SetA(fade), fadeTime);
+          
+          if (tooltipText != null)
+            await Fade(0.0f, 1.0f, fadeTime * 0.5f, (fade) => tooltipText.color = tooltipText.color.SetA(fade), fadeTime);
+
+          if (progressBackgroundImage != null)
+            await Fade(0.0f, 1.0f, fadeTime * 0.5f, (fade) => progressBackgroundImage.color = progressBackgroundImage.color.SetA(fade), fadeTime);
+
+          cameraMain?.gameObject.SetActive(true);
 
           if (this.sceneBuildIndex != -1)
-          {
-            if (cameraMain != null)
-              cameraMain.gameObject.SetActive(true);
-
             await UnloadAsync();
-          }
 
           AsyncOperation asyncOp = SceneManager.LoadSceneAsync(sceneBuildIndex, LoadSceneMode.Additive);
           asyncOp.allowSceneActivation = false;
           asyncOp.priority = asyncOpPriority;
 
+#if FAKE_PROGRESS
+          // @HACK: The final 10% is to wakeup the main thread.
+          while (asyncOp.progress < 0.9f)
+            await Awaiters.NextUpdate();
+
+          float loadingTime = Rand.Range(1.0f, 2.0f);
+          float time = 0.0f;
+          while (time <= loadingTime)
+          {
+            float progress = time / loadingTime;
+
+            if (progressForegroundImage != null)
+              progressForegroundImage.fillAmount = progress;
+
+            OnProgress?.Invoke(progress);
+
+            time += Time.unscaledDeltaTime;
+
+            await Awaiters.NextUpdate();
+          }
+#else
           // @HACK: The final 10% is to wakeup the main thread.
           while (asyncOp.progress < 0.9f)
           {
             // [0, 0.9] > [0, 1].
             float progress = Mathf.Clamp01(asyncOp.progress / 0.9f);
 
-            // @TODO: Progressbar.
+            if (progressForegroundImage != null)
+              progressForegroundImage.fillAmount = progress;
 
             OnProgress?.Invoke(progress);
 
-            await Task.Delay(10);
+            await Awaiters.Seconds(0.01f);
           }
+#endif
 
-          if (cameraMain != null)
-            cameraMain.gameObject.SetActive(false);
+          cameraMain?.gameObject.SetActive(false);
+
+          await Awaiters.NextFixedUpdate();
 
           asyncOp.allowSceneActivation = true;
 
@@ -330,7 +360,7 @@ namespace FronkonGames.GameWork.Modules.SceneModule
           if (waitExtraTime > 0.0f)
             await Awaiters.Seconds(waitExtraTime);
 
-          await Fade(1.0f, 0.0f);
+          await Fade(1.0f, 0.0f, fadeTime, (fade) => canvasGroup.alpha = fade);
 
           UnloadUI();
 
@@ -381,7 +411,10 @@ namespace FronkonGames.GameWork.Modules.SceneModule
             await Task.Delay(10);
 
           if (request.asset != null)
+          {
             backgroundImage.sprite = request.asset as Sprite;
+            backgroundImage.color = Color.white;
+          }
           else
             Log.Error($"Texture '{backgroundImagePath}' not found");
         }
@@ -393,42 +426,41 @@ namespace FronkonGames.GameWork.Modules.SceneModule
         if (canvas != null)
           canvas.sortingOrder = canvasSortOrder;
 
+        if (tittleText != null)
+          tittleText.color = tittleText.color.SetA(0.0f);
+
+        if (tooltipText != null)
+          tooltipText.color = tooltipText.color.SetA(0.0f);
+
         if (progressBackgroundImage != null)
-          progressBackgroundImage.enabled = false;
+          progressBackgroundImage.color = progressBackgroundImage.color.SetA(0.0f);
 
         if (progressForegroundImage != null)
-        {
-          progressForegroundImage.enabled = false;
           progressForegroundImage.fillAmount = 0.0f;
-        }
       }
     }
 
-    private async Task Fade(float start, float end)
+    private async Task Fade(float start, float end, float duration, Action<float> fade, float delay = 0.0f)
     {
-      if (canvasGroup != null)
-      {
-        canvasGroup.blocksRaycasts = true;
-        canvasGroup.alpha = start;
-      }
+      fade.Invoke(start);
 
-      if (canvasGroup != null && fadeTime > 0.0f)
+      if (delay > 0.0f)
+        await Awaiters.Seconds(delay);
+
+      if (duration > 0.0f)
       {
         float time = 0.0f;
-        while (time < fadeTime)
+        while (time < duration)
         {
           time += Time.unscaledDeltaTime;
-          canvasGroup.alpha = Mathf.Lerp(start, end, time / fadeTime);
+
+          fade.Invoke(Mathf.Lerp(start, end, time / duration));
 
           await Awaiters.NextUpdate();
         }
       }
 
-      if (canvasGroup != null)
-      {
-        canvasGroup.blocksRaycasts = false;
-        canvasGroup.alpha = end;
-      }
+      fade.Invoke(end);
     }
 
     private void UnloadUI()
