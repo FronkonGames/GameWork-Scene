@@ -25,7 +25,7 @@ using FronkonGames.GameWork.Foundation;
 namespace FronkonGames.GameWork.Modules.SceneModule
 {
   /// <summary>
-  /// .
+  /// Scene module.
   /// </summary>
   public sealed class SceneModule : MonoBehaviourModule,
                                     IInitializable

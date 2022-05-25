@@ -14,7 +14,6 @@
 // COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-using UnityEngine;
 using FronkonGames.GameWork.Foundation;
 using FronkonGames.GameWork.Core;
 
@@ -23,8 +22,9 @@ namespace FronkonGames.GameWork.Modules.SceneModule
   /// <summary>
   /// .
   /// </summary>
-  public sealed class SceneModuleController : MonoBehaviour
+  public sealed class SceneModuleController : BaseMonoBehaviour
   {
+    [Inject]
     private SceneModule sceneModule;
 
     private string[] tooltips =
@@ -34,11 +34,6 @@ namespace FronkonGames.GameWork.Modules.SceneModule
       "This is the tooltip #3",
       "This is the tooltip #4",
     };
-
-    private void OnEnable()
-    {
-      sceneModule = Game.Instance.GetModule<SceneModule>();
-    }
 
     /// <summary>
     /// 
