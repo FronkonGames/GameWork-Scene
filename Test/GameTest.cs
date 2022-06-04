@@ -16,23 +16,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using UnityEngine;
 using FronkonGames.GameWork.Core;
+using FronkonGames.GameWork.Modules.Scene;
 
-namespace FronkonGames.GameWork.Modules.SceneModule
+/// <summary>
+/// .
+/// </summary>
+public sealed class GameTest : Game
 {
-  /// <summary>
-  /// .
-  /// </summary>
-  public sealed class GameTest : Game
-  {
-    [SerializeField]
-    private SceneModule sceneModule;
+  [SerializeField]
+  private SceneModule sceneModule;
 
-    /// <summary>
-    /// On initialize.
-    /// </summary>
-    public override void OnInitialize()
-    {
-      RegisterModule(sceneModule);
-    }
+  /// <summary>
+  /// On initialize.
+  /// </summary>
+  public override void OnInitialize()
+  {
+    RegisterModule(sceneModule);
   }
 }
+

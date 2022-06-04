@@ -1,0 +1,12 @@
+{
+  "name": "FronkonGames.GameWork.Modules.Scene.Test",
+  "references": [
+    "FronkonGames.GameWork.Modules.Scene",
+    "FronkonGames.GameWork.Core",
+    "FronkonGames.GameWork.Foundation"
+  ],
+  "optionalUnityReferences": [ "TestAssemblies" ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false
+}

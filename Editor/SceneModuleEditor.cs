@@ -17,7 +17,7 @@
 using UnityEditor;
 using FronkonGames.GameWork.Foundation;
 
-namespace FronkonGames.GameWork.Modules.SceneModule
+namespace FronkonGames.GameWork.Modules.Scene
 {
   /// <summary>
   /// .

@@ -1,9 +1,9 @@
 ﻿{
-  "name": "FronkonGames.GameWork.Modules.SceneModule.Editor",
+  "name": "FronkonGames.GameWork.Modules.Scene.Editor",
   "references":
   [
     "FronkonGames.GameWork.Foundation.Editor",
-    "FronkonGames.GameWork.Modules.SceneModule"
+    "FronkonGames.GameWork.Modules.Scene"
   ],
   "optionalUnityReferences": [],
   "includePlatforms": [],

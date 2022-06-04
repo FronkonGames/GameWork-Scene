@@ -16,37 +16,35 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using FronkonGames.GameWork.Foundation;
 using FronkonGames.GameWork.Core;
+using FronkonGames.GameWork.Modules.Scene;
 
-namespace FronkonGames.GameWork.Modules.SceneModule
+/// <summary>
+/// .
+/// </summary>
+public sealed class SceneModuleController : BaseMonoBehaviour
 {
-  /// <summary>
-  /// .
-  /// </summary>
-  public sealed class SceneModuleController : BaseMonoBehaviour
+  [Inject]
+  private SceneModule sceneModule;
+
+  private string[] tooltips =
   {
-    [Inject]
-    private SceneModule sceneModule;
+    "This is the tooltip #1",
+    "This is the tooltip #2",
+    "This is the tooltip #3",
+    "This is the tooltip #4",
+  };
 
-    private string[] tooltips =
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="sceneBuildIndex"></param>
+  public void LoadScene(int sceneBuildIndex)
+  {
+    if (sceneModule != null && sceneModule.IsLoading == false)
     {
-      "This is the tooltip #1",
-      "This is the tooltip #2",
-      "This is the tooltip #3",
-      "This is the tooltip #4",
-    };
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sceneBuildIndex"></param>
-    public void LoadScene(int sceneBuildIndex)
-    {
-      if (sceneModule != null && sceneModule.IsLoading == false)
-      {
-        sceneModule.Title = sceneModule.GetLoadingTranslated().ToLower();
-        sceneModule.Tooltip = tooltips.Random();
-        sceneModule.Load(sceneBuildIndex);
-      }
+      sceneModule.Title = sceneModule.GetLoadingTranslated().ToLower();
+      sceneModule.Tooltip = tooltips.Random();
+      sceneModule.Load(sceneBuildIndex);
     }
   }
 }

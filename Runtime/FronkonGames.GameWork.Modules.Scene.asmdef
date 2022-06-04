@@ -1,5 +1,5 @@
 ﻿{
-  "name": "FronkonGames.GameWork.Modules.SceneModule",
+  "name": "FronkonGames.GameWork.Modules.Scene",
   "references":
   [
     "FronkonGames.GameWork.Core",

@@ -1,5 +1,5 @@
 {
-  "name": "com.frokongames.gamework.modules.scenemodule",
+  "name": "com.frokongames.gamework.modules.scene",
   "version": "0.0.1",
   "displayName": "Game:Work Scene Module",
   "decription": "Scene loading management module.",
