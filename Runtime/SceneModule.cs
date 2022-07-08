@@ -75,52 +75,52 @@ namespace FronkonGames.GameWork.Modules.Scene
     /// <value></value>
     public int CurrentSceneBuildIndex { get { return sceneBuildIndex; } }
 
-    [SerializeField, SceneBuildIndex(1, "Scene to start (>0).")]
+    [SerializeField, Scene, Tooltip("Scene to start (>0).")]
     private int startSceneIndex = 1;
 
-    [SerializeField, Enum((int)ThreadPriority.High, "Background load priority.")]
+    [SerializeField, Tooltip("Background load priority.")]
     private ThreadPriority backgroundLoadingPriority = ThreadPriority.High;
 
-    [SerializeField, Slider(0, 100, 100, "Async operations priority.")]
+    [SerializeField, Range(0, 100), Tooltip("Async operations priority.")]
     private int asyncOpPriority = 100;
 
-    [SerializeField, Bool("Unload unsued assets?")]
+    [SerializeField, Tooltip("Unload unsued assets?")]
     private bool unloadUnusedAssets = true;
 
-    [SerializeField, Slider(0.0f, 2.0f, 0.25f, "Fade in/out time in seconds.")]
+    [SerializeField, Range(0.0f, 2.0f), Tooltip("Fade in/out time in seconds.")]
     private float fadeTime = 0.25f;
 
-    [SerializeField, CanvasGroup("Loading canvas.")]
+    [SerializeField]//, CanvasGroup("Loading canvas.")]
     private CanvasGroup canvasGroup = null;
 
-    [SerializeField, Int(100, "Canvas sort order.")]
+    [SerializeField, Tooltip("Canvas sort order.")]
     private int canvasSortOrder = 100;
 
-    [SerializeField, Color(0.0f, 0.0f, 0.0f, 1.0f, "Background color.")]
+    [SerializeField, Tooltip("Background color.")]
     private Color backgroundColor = Color.black;
 
-    [SerializeField, Image("Loading image.")]
+    [SerializeField]//, Image("Loading image.")]
     private Image backgroundImage = null;
 
-    [SerializeField, Text("Title.")]
+    [SerializeField]//, Tooltip("Title.")]
     private Text tittleText = null;
 
-    [SerializeField, Text("Tooltip text.")]
+    [SerializeField]//, Tooltip("Tooltip text.")]
     private Text tooltipText = null;
 
-    [SerializeField, Image("Progress background image.")]
+    [SerializeField]//, Image("Progress background image.")]
     private Image progressBackgroundImage = null;
 
-    [SerializeField, Image("Progress image.")]
+    [SerializeField]//, Image("Progress image.")]
     private Image progressForegroundImage = null;
 
-    [SerializeField, Text("Progress text.")]
+    [SerializeField, Tooltip("Progress text.")]
     private Text progressText = null;
 
-    [SerializeField, String("Resources path.")]
+    [SerializeField, Tooltip("Resources path.")]
     private string backgroundImagePath;
 
-    [SerializeField, Float(0.0f, 10.0f, 0.0f, "Wait extra time after the scene load.")]
+    [SerializeField, Range(0.0f, 10.0f), Tooltip("Wait extra time after the scene load.")]
     private float waitExtraTime = 0.0f;
 
     /// <summary>
