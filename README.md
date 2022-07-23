@@ -1,6 +1,5 @@
 <p align="center"><img src="Documentation/Animation.gif" /></p>
-
-<p align="center"><b>Async Scene Loading Management Module</b></p>
+<p align="center"><b>Async Scene Loading Management</b></p>
 <br>
 <p align="center">
   <a style="text-decoration:none">
